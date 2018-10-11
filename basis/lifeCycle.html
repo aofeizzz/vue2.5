@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:v-on="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>生命周期函数、模板语法</title>
+    <script src="../js/vue.js"></script>
+</head>
+<body>
+
+<div id="app">
+    <!--{{}} 插值表达式-->
+    {{text + ' 789'}}
+    <div v-text="text + ' 789'"></div>
+    <div v-html="html + '<h1>.js</h1>'"></div>
+    <button :disabled="disabled" v-on:click="destroy">{{buttonName}}</button>
+    <input type="text" v-model="inputValue"/>
+</div>
+
+<script>
+    // 生命周期函数：vue实例在某一个时间点会自动执行的函数
+    var vm = new Vue({
+        el: '#app',
+
+        data: {
+            disabled: false,
+            text: '123 456',
+            html: '<h1>Hello Vue</h1>',
+            buttonName: '销毁',
+            inputValue: ''
+        },
+
+        // init 初始化执行
+        beforeCreate () {
+            console.log('init 初始化执行：beforeCreate')
+        },
+        created () {
+            console.log('init 初始化执行：created')
+        },
+
+        // 当没有 template 属性时，会把 el 元素当做模板进行渲染
+        // 若有则直接渲染 template 的内容
+        // template: '<div>Hello Vue</div>',
+
+        // 页面渲染之前自动执行，也就是模板和数据结合即将挂载到页面上的一瞬间前的时间点
+        beforeMount () {
+            console.log('页面渲染之前自动执行：beforeMount')
+            console.log(this.$el)
+        },
+        // 页面渲染之后自动执行
+        mounted () {
+            console.log('页面渲染之后自动执行：mounted')
+            console.log(this.$el)
+        },
+
+        // 数据放生改变，重新渲染之前自动执行
+        beforeUpdate () {
+            console.log('数据放生改变，重新渲染之前自动执行：beforeUpdate')
+        },
+        // 数据反生改变，重新渲染之后自动执行
+        updated () {
+            console.log('数据反生改变，重新渲染之后自动执行：updated')
+        },
+
+        // 组件被销毁前自动执行
+        beforeDestroy () {
+            console.log('组件被销毁前自动执行：beforeDestroy')
+        },
+        // 组件完全被销毁后自动执行
+        destroyed () {
+            console.log('组件完全被销毁后自动执行：destroyed')
+        },
+
+        methods: {
+            destroy () {
+                // 销毁组件
+                this.$destroy()
+            }
+        }
+    })
+</script>
+</body>
+</html>

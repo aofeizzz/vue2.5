@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:v-on="http://www.w3.org/1999/xhtml" xmlns:v-bind="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>列表渲染</title>
+    <script src="../js/vue.js"></script>
+</head>
+<body>
+
+<div id="app">
+    <button @click="add">add</button>
+    <div v-for="(item, key, index) of userInfo" :key="key">
+        {{item}} : {{key}} --- {{index}}
+    </div>
+    <p>
+        变异方法：
+        <button @click="handlePush">push</button>
+        <button @click="handlePop">pop</button>
+        <button @click="handleShift">shift</button>
+        <button @click="handleUnshift">unshift</button>
+        <button @click="handleSplice">splice</button>
+        <button @click="handleSort">sort</button>
+        <button @click="handleReverse">reverse</button>
+    </p>
+    <p>
+        非变异方法：
+        <button @click="handleFilter">filter</button>
+        <button @click="handleConcat">concat</button>
+        <button @click="handleSlice">slice</button>
+    </p>
+    <!--提升循环显示的性能，提供一个 key 值，且是惟一的，不推荐使用 index 作为 key 值-->
+    <div v-for="(item, index) of list" :key="index">
+        {{index}} : {{item}}
+    </div>
+    <div>
+        <form @submit.prevent="addNewTodo">
+            <label for="new-todo"></label>
+            <input v-model="newTodoText" id="new-todo" placeholder="add">
+            <button>add</button>
+        </form>
+        <ul>
+            <!--is 组件别名-->
+            <li is="todo-item"
+                v-for="(todo, index) in todos"
+                :key="todo.id"
+                :title="todo.title"
+                @remove="todos.splice(index, 1)">
+            
+            </li>
+        </ul>
+    </div>
+</div>
+
+<script>
+    var TodoItem = {
+        template: '<li>{{title}}<button @click="handleItemClick">Remove</button></li>',
+        props: ['title'],
+        methods: {
+            handleItemClick () {
+                this.$emit('remove', this.index)
+            }
+        }
+    }
+
+    var vm = new Vue({
+        el: '#app',
+        components: {
+            TodoItem: TodoItem
+        },
+        data: {
+            list: [
+                55,
+                12,
+                32,
+                2,
+                4
+            ],
+            userInfo: {
+                name: 'Aofei',
+                age: 27,
+                phone: '13692110628',
+                email: '228589060@qq.com',
+                address: 'shenzhen baoan'
+            },
+            newTodoText: '',
+            todos: [
+                {
+                    id: 1,
+                    title: 'a'
+                },
+                {
+                    id: 2,
+                    title: 'b'
+                },
+                {
+                    id: 3,
+                    title: 'c'
+                }
+            ],
+            nextTodoId: 4
+        },
+        methods: {
+            add () {
+                this.$set(this.userInfo, 'ppp', 'dsadsa')
+            },
+            // 变异方法：
+            handlePush () {
+                this.list.push((this.list[this.list.length - 1] || 'push') + ' push')
+            },
+            handlePop () {
+                this.list.pop()
+            },
+            handleShift () {
+                this.list.shift()
+            },
+            handleUnshift () {
+                this.list.unshift((this.list[0] || 'push') + ' push')
+            },
+            handleSplice () {
+                this.list.splice(2, 1, Math.random().toString(36).substring(2))
+            },
+            handleSort () {
+                this.list.sort()
+            },
+            handleReverse () {
+                this.list.reverse()
+            },
+            // 非变异方法：
+            handleFilter () {
+                this.list = this.list.filter((item, index) => {
+                    return item % 2 === 0
+                })
+            },
+            handleConcat () {
+            },
+            handleSlice () {
+            },
+            addNewTodo: function () {
+                this.todos.push({
+                    id: this.nextTodoId++,
+                    title: this.newTodoText
+                })
+                this.newTodoText = ''
+            }
+        }
+    })
+</script>
+
+</body>
+</html>

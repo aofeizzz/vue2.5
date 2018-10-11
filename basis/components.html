@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>组件基础</title>
+    <script src="../js/vue.js"></script>
+</head>
+<body>
+
+<div id="app">
+    <table>
+        <tbody>
+        <!--ref 引用信息将会注册在父组件的 $refs 对象上-->
+        <!--ref 用在子组件上，引用指向子组件实例-->
+        <!--is 组件别名-->
+        <!--父组件用属性向子组件传递信息-->
+        <tr ref="row1"
+            is="row"
+            @on-change="handleChange"
+            :num="num1"
+            :str="str"
+            :array="array"
+            :obj="obj">
+        
+        </tr>
+        <tr ref="row2"
+            is="row"
+            @on-change="handleChange"
+            :num="num2"
+            :str="str"
+            :array="array"
+            :obj="obj">
+        
+        </tr>
+        <!--native 修饰符：给组件绑定原生事件-->
+        <tr is="row"
+            @click.native="handleTrClick"
+            num="原生事件"
+            :array="array"
+            :obj="obj">
+        
+        </tr>
+        <tr>
+            <td>{{total}}</td>
+        </tr>
+        <tr>
+            <td>
+                <!--ref 用在普通的 DOM 元素上，引用指向的就是 DOM 元素-->
+                <button ref="hello" @click="handleClick">hello</button>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+
+<script>
+    var Row = {
+        // props 接收父组件传递
+        // props 特性：父组件传属性，子组件用 props 接收属性，dom 元素的 html 标签中不会显示此属性
+        // 非 props 特性： 父组件传属性，子组件没有用 props 接收属性，dom 元素的 html 标签中会显示此属性
+        props: {
+            // 组件参数校验
+            num: {
+                type: [Number, String],
+                required: true
+            },
+            str: {
+                type: String,
+                required: false,
+                default: 'dsadsadsa',
+                validator (value) {
+                    return value.length > 5
+                }
+            },
+            array: {
+                type: Array,
+                required: false,
+                default: []
+            },
+            obj: {
+                type: Object,
+                required: true
+            }
+        },
+        // 组件的复用（子组件中），data 必须是个函数
+        data () {
+            return {
+                number: this.num
+            }
+        },
+        template:
+            '<tr><td>{{num}}</td><td><button @click="handleClick">{{number}}<template v-if="typeof this.number === \'number\'">自定义组件</template></button></td></tr>',
+        methods: {
+            handleClick () {
+                if (typeof this.number === 'number')
+                    this.number++
+                // $emit 子组件通过自定义 events 向父组件传递
+                // 单向数据流，子组件不能改变父组件传递过来的信息
+                this.$emit('on-change', 1)
+            }
+        }
+    }
+
+    var vm = new Vue({
+        el: '#app',
+        components: {
+            Row: Row
+        },
+        data: {
+            num1: 0,
+            num2: 0,
+            total: 0,
+            str: 'aaaaaaaa',
+            array: [],
+            obj: {}
+        },
+        methods: {
+            handleChange (number) {
+                // 子组件使用 ref，返回子组件实例
+                console.log(this.$refs.row1)
+                console.log(this.$refs.row2)
+                this.num1 = this.$refs.row1.$data.number
+                this.num2 = this.$refs.row2.$data.number
+                this.total += number
+            },
+            handleTrClick () {
+                console.log(111)
+            },
+            handleClick () {
+                // 返回 DOM 元素
+                console.log(this.$refs.hello)
+            }
+        }
+    })
+</script>
+
+</body>
+</html>
