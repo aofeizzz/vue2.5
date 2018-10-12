@@ -9,20 +9,20 @@
 
 <div id="app">
     <!--添加一个具有唯一值的 key 属性，表达“这两个元素是完全独立的，不要复用它们”-->
-    <div v-if="show === 1">
+    <h3 v-if="show === 1">
         用户名：<input placeholder="用户名" key="username"/>
-    </div>
-    <div v-else-if="show === 2">
+    </h3>
+    <h3 v-else-if="show === 2">
         邮箱：<input placeholder="邮箱" key="email"/>
-    </div>
-    <div v-else>
+    </h3>
+    <h3 v-else>
         手机号：<input placeholder="手机号" key="mobile"/>
-    </div>
+    </h3>
     <button @click="handleClick">切换</button>
     <!--如果在运行时条件很少改变，用 v-if 较好，v-if 是真正的销毁-->
     <!--如果需要非常频繁地切换，用 v-show 较好，v-show 是 display: none;-->
-    <div v-if="show === 1" data-text="v-if">Hello Vue</div>
-    <div v-show="show === 1" data-text="v-show">Hello Vue</div>
+    <h3 v-if="show === 1" data-text="v-if">Hello Vue</h3>
+    <h3 v-show="show === 1" data-text="v-show">Hello Vue</h3>
 </div>
 
 <script>

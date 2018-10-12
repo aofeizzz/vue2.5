@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>组件基础</title>
+    <title>组件基础、父子组件传值、slot插槽</title>
     <script src="../js/vue.js"></script>
 </head>
 <body>
@@ -32,7 +32,8 @@
             :obj="obj">
         
         </tr>
-        <!--native 修饰符：给组件绑定原生事件-->
+        <!--.native 修饰符：给组件绑定原生事件-->
+        <!--现在在组件上使用 v-on 只会监听自定义事件 (组件用 $emit 触发的事件)。如果要监听根元素的原生事件，可以使用 .native 修饰符-->
         <tr is="row"
             @click.native="handleTrClick"
             num="原生事件"
@@ -41,12 +42,31 @@
         
         </tr>
         <tr>
-            <td>{{total}}</td>
+            <td><h3>{{total}}</h3></td>
         </tr>
         <tr>
             <td>
                 <!--ref 用在普通的 DOM 元素上，引用指向的就是 DOM 元素-->
                 <button ref="hello" @click="handleClick">hello</button>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <!--插槽：插入子组件标签中的内容-->
+                <!--具名插槽：通过 slot 属性对应传给子组件的插槽内容，如：slot="header"-->
+                <child>
+                    <h2 slot="header">Header</h2>
+                    <span slot="content">Content</span>
+                    <!--slot 作用域插槽 start-->
+                    <!--父组件控制子组件应该显示哪些内容-->
+                    <!--必须使用 template 占位标签-->
+                    <!--自定义子组件 slot 传递过来的值名称，如：slot-scope="aaaa"-->
+                    <template slot-scope="aaaa">
+                        <h3>{{aaaa.dsa}} . {{aaaa.mmp}}</h3>
+                    </template>
+                    <!--slot 作用域插槽 end-->
+                    <h2 slot="footer">Footer</h2>
+                </child>
             </td>
         </tr>
         </tbody>
@@ -82,14 +102,22 @@
                 required: true
             }
         },
-        // 组件的复用（子组件中），data 必须是个函数
+        // 组件的复用（子组件中），data 必须是个函数，因此每个实例可以维护一份被返回对象的独立的拷贝
+        // 如果 Vue 没有这条规则，点击一个按钮就可能会像如下代码一样影响到其它所有实例
         data () {
             return {
                 number: this.num
             }
         },
         template:
-            '<tr><td>{{num}}</td><td><button @click="handleClick">{{number}}<template v-if="typeof this.number === \'number\'">自定义组件</template></button></td></tr>',
+            `<tr>
+                <td><h3>{{num}}</h3></td>
+                <td>
+                    <button @click="handleClick">
+                        {{number}}<template v-if="typeof this.number === \'number\'">自定义组件</template>
+                    </button>
+                </td>
+            </tr>`,
         methods: {
             handleClick () {
                 if (typeof this.number === 'number')
@@ -101,10 +129,33 @@
         }
     }
 
+    var Child = {
+        // vue 语法中的 slot 标签：接收父组件中子组件标签中的插槽内容，可在标签中定义默认值
+        // 通过 name 属性对应父组件传递过来的插槽内容
+        template:
+            `<div>
+                <slot name="header">default header</slot>
+                <h2>Hello <slot name="content">default content</slot></h2>
+                <ul>
+                    <slot v-for="(item, index) of list"
+                          :mmp="item"
+                          :dsa="index">
+                    </slot>
+                </ul>
+                <slot name="footer">default footer</slot>
+            </div>`,
+        data () {
+            return {
+                list: [1, 2, 3, 4, 5]
+            }
+        }
+    }
+
     var vm = new Vue({
         el: '#app',
         components: {
-            Row: Row
+            Row: Row,
+            Child: Child
         },
         data: {
             num1: 0,
@@ -124,10 +175,11 @@
                 this.total += number
             },
             handleTrClick () {
-                console.log(111)
+                console.log('.native 修饰符：给组件绑定原生事件')
             },
             handleClick () {
                 // 返回 DOM 元素
+                console.log('返回 DOM 元素：')
                 console.log(this.$refs.hello)
             }
         }

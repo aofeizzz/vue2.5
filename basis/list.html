@@ -9,11 +9,11 @@
 
 <div id="app">
     <button @click="add">add</button>
-    <div v-for="(item, key, index) of userInfo" :key="key">
+    <h3 v-for="(item, key, index) of userInfo" :key="key">
         {{item}} : {{key}} --- {{index}}
-    </div>
+    </h3>
     <p>
-        变异方法：
+        <h3>变异方法：</h3>
         <button @click="handlePush">push</button>
         <button @click="handlePop">pop</button>
         <button @click="handleShift">shift</button>
@@ -23,15 +23,15 @@
         <button @click="handleReverse">reverse</button>
     </p>
     <p>
-        非变异方法：
+        <h3>非变异方法：</h3>
         <button @click="handleFilter">filter</button>
         <button @click="handleConcat">concat</button>
         <button @click="handleSlice">slice</button>
     </p>
     <!--提升循环显示的性能，提供一个 key 值，且是惟一的，不推荐使用 index 作为 key 值-->
-    <div v-for="(item, index) of list" :key="index">
+    <h3 v-for="(item, index) of list" :key="index">
         {{index}} : {{item}}
-    </div>
+    </h3>
     <div>
         <form @submit.prevent="addNewTodo">
             <label for="new-todo"></label>
@@ -39,7 +39,7 @@
             <button>add</button>
         </form>
         <ul>
-            <!--is 组件别名-->
+            <!--组件别名：is 属性-->
             <li is="todo-item"
                 v-for="(todo, index) in todos"
                 :key="todo.id"
@@ -53,7 +53,13 @@
 
 <script>
     var TodoItem = {
-        template: '<li>{{title}}<button @click="handleItemClick">Remove</button></li>',
+        template:
+            `<li>
+                <h3>
+                    {{title}}
+                    <button @click="handleItemClick">Remove</button>
+                </h3>
+            </li>`,
         props: ['title'],
         methods: {
             handleItemClick () {

@@ -32,7 +32,13 @@
     var TodoItem = {
         props: ['item', 'index'],
         // v-on: 可简写为 @
-        template: '<li @click="handleItemClick">{{index+1}} . {{item}}</li>',
+        template:
+            `<li>
+                <h3>
+                    {{index+1}} . {{item}}
+                    <button @click="handleItemClick">remove</button>
+                </h3>
+            </li>`,
         methods: {
             handleItemClick () {
                 this.$emit('delete', this.index)
@@ -50,16 +56,16 @@
         },
 
         data: {
-            inputValue: '',
+            inputValue: 'example',
             buttonName: '提交',
-            list: []
+            list: ['dsadsa']
         },
 
         methods: {
             submit () {
                 if (this.inputValue) {
                     this.list.push(this.inputValue)
-                    this.inputValue = ''
+                    this.inputValue = 'example'
                 }
             },
             handleItemDelete (index) {

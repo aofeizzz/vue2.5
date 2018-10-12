@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>动态组件、v-once指令</title>
+    <script src="../js/vue.js"></script>
+</head>
+<body>
+
+<div id="app">
+    <child-one v-if="type === 'child-one'"></child-one>
+    <child-two v-if="type === 'child-two'"></child-two>
+    <button @click="handleClick">change</button>
+    <!--component 动态组件：渲染一个“元组件”为动态组件。依 is 的值，来决定哪个组件被渲染-->
+    <!--每次切换组件，底层都需要销毁一个组件，再创建一个组件。这样的操作耗费了一定的性能，为优化性能可以所要切换的子组件中使用 v-one 指令-->
+    <component :is="type"></component>
+</div>
+
+<script>
+    var ChildOne = {
+        // v-one 指令：组件会被放在内存里，切换组件的时候会直接拿出来用，这样就不需要频繁的进行组件的销毁与重建了
+        template: `<h3 v-one>child-one</h3>`
+    }
+
+    var ChildTwo = {
+        template: `<h3 v-one>child-two</h3>`
+    }
+
+    var vm = new Vue({
+        el: '#app',
+        components: {
+            ChildOne: ChildOne,
+            ChildTwo: ChildTwo
+        },
+        data: {
+            type: 'child-one'
+        },
+        methods: {
+            handleClick () {
+                this.type = this.type === 'child-one' ? 'child-two' : 'child-one'
+            }
+        }
+    })
+</script>
+
+</body>
+</html>

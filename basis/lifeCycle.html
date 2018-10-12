@@ -9,8 +9,8 @@
 
 <div id="app">
     <!--{{}} 插值表达式-->
-    {{text + ' 789'}}
-    <div v-text="text + ' 789'"></div>
+    <h3>{{text + ' 789'}}</h3>
+    <h3 v-text="text + ' 789'"></h3>
     <div v-html="html + '<h1>.js</h1>'"></div>
     <button :disabled="disabled" v-on:click="destroy">{{buttonName}}</button>
     <input type="text" v-model="inputValue"/>

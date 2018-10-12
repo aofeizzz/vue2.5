@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>非父子组件传值（Bus/总线/发布订阅模式/观察者模式）</title>
+    <script src="../js/vue.js"></script>
+</head>
+<body>
+
+<div id="app">
+    <!--兄弟组件-->
+    <child content="Dell"></child>
+    <child content="Lee"></child>
+</div>
+
+<script>
+    // Vue.prototype 添加实例属性
+    // 往 prototype 上挂载一个 bus 属性，使其在每个 Vue 的实例中可用，这个属性指向一个 Vue 实例
+    Vue.prototype.bus = 'Vue.prototype.bus'
+    // $ 是在 Vue 所有实例中都可用的属性的一个简单约定。这样做会避免和已被定义的数据、方法、计算属性产生冲突
+    // 日志中会先出现 "Vue.prototype.bus"，然后出现 "data.bus"，
+    // 因为 Vue.prototype.bus 实例属性创建之后被 data.bus 覆写了。
+    // 我们通过 $ 为实例属性设置作用域来避免这种事情发生。
+    // 还可以根据你的喜好使用自己的约定，诸如 $_bus 或 Ωbus，来避免和插件或未来的插件相冲突。
+    Vue.prototype.$bus = new Vue()
+    Vue.prototype.$_bus = 'Vue.prototype.$_bus'
+    Vue.prototype.$_bus = 'Vue.prototype.$_bus'
+
+    var Child = {
+        props: {
+            content: String
+        },
+        data () {
+            return {
+                msg: this.content
+            }
+        },
+        template: '<button @click="handleClick">{{msg}}</button>',
+        mounted () {
+            let _this = this
+            // 用 $bus 实例中的 $on 监听
+            this.$bus.$on('change', (val) => {
+                _this.msg = val
+            })
+        },
+        methods: {
+            handleClick () {
+                // 因为 $bus 属性指向一个 Vue 实例，所以能用 $emit 向 $bus 中传递一个 change 事件
+                this.$bus.$emit('change', this.content)
+            }
+        }
+    }
+
+    console.log(Vue.prototype.bus, Vue.prototype.$bus, Vue.prototype.$_bus)
+
+    var vm = new Vue({
+        el: '#app',
+        components: {
+            Child: Child
+        },
+        data: {
+            bus: 'data.bus'
+        },
+        beforeCreate () {
+            console.log('beforeCreate：')
+            console.log(this.bus, this.$bus, this.$_bus)
+        },
+        created () {
+            console.log('created：')
+            console.log(this.bus, this.$bus, this.$_bus)
+        },
+        mounted () {
+            console.log('mounted：')
+            console.log(this.bus, this.$bus, this.$_bus)
+            console.log(this)
+        }
+    })
+</script>
+
+</body>
+</html>

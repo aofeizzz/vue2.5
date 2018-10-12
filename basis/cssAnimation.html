@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Vue中CSS动画原理</title>
+    <script src="../js/vue.js"></script>
+    <style>
+        .v-enter,
+        .v-leave-to,
+        .dsa-enter,
+        .dsa-leave-to {
+            opacity: 0;
+        }
+        
+        /* transition 一直在监听 opacity 的变化，发现 opacity 由 1 变为 0 了，这个变化会有 2s 的过度*/
+        .v-enter-active,
+        .v-leave-active,
+        .dsa-enter-active,
+        .dsa-leave-active {
+            transition: opacity 2s;
+        }
+    </style>
+</head>
+<body>
+
+<div id="app">
+    <button @click="handleClick">change</button>
+    <!--
+        显示的动画过程：
+        第一帧，存在 .v-enter 和 .v-enter-active ，此时的 opacity 为 1；
+        第二帧，Vue 看到 transition 标签，会移除 .v-enter，新增 .v-enter-to ；
+        最后一帧，动画结束后，Vue 会移除 .v-enter-to 和 .v-enter-active
+    -->
+    <!--
+        隐藏的动画过程：
+        第一帧，存在 .v-leave 和 .v-leave-active ，此时的 opacity 为 1；
+        第二帧，Vue 看到 transition 标签，会移除 .v-leave，新增 .v-leave-to ；
+        最后一帧，动画结束后，Vue 会移除 .v-leave-to 和 .v-leave-active
+    -->
+    <transition>
+        <h3 v-if="show">Hello Vue</h3>
+    </transition>
+    <!--name 属性：自定义 class 前缀，如：.dsa-enter，.dsa-enter-active-->
+    <!--若没有 name，则 class 前缀默认为 v，如：.v-enter，.v-enter-active-->
+    <transition name="dsa">
+        <h3 v-if="show">Hello Vue</h3>
+    </transition>
+</div>
+
+<script>
+    var vm = new Vue({
+        el: '#app',
+        data: {
+            show: true
+        },
+        methods: {
+            handleClick () {
+                this.show = this.show ? false : true
+            }
+        }
+    })
+</script>
+
+</body>
+</html>
