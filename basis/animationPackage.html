@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Vue中的动画封装</title>
+    <script src="../js/vue.js"></script>
+    <style>
+        .v-enter,
+        .v-leave-to {
+            opacity: 0;
+        }
+        
+        .v-enter-active,
+        .v-leave-active {
+            transition: opacity 1s;
+        }
+    </style>
+</head>
+<body>
+
+<div id="app">
+    <button @click="handleClick">change</button>
+    <dsa :show="show">
+        <h3>Hello Vue</h3>
+    </dsa>
+    <dsa :show="show">
+        <h4>Hello Vue</h4>
+    </dsa>
+    <dsa :show="show">
+        <h5>Hello Vue</h5>
+    </dsa>
+</div>
+
+<script>
+    var dsa = {
+        props: ['show'],
+        template: `
+            <transition>
+                <slot v-if="show"></slot>
+            </transition>`
+    }
+
+    var vm = new Vue({
+        el: '#app',
+        components: {
+            dsa: dsa
+        },
+        data: {
+            show: true
+        },
+        methods: {
+            handleClick () {
+                this.show = !this.show
+            }
+        }
+    })
+</script>
+
+</body>
+</html>

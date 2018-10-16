@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Vue中的JS动画和velocity.js</title>
+    <script src="../js/vue.js"></script>
+    <script src="../js/velocity.min.js"></script>
+</head>
+<body>
+
+<div id="app">
+    <button @click="handleClick">change</button>
+    <!--JS 动画的钩子函数：入场和离场动画时自动执行-->
+    <transition name="dsa"
+                @before-enter="handleBeforeEnter"
+                @enter="handleEnter"
+                @after-enter="handleAfterEnter"
+                @before-leave="handleBeforeLeave"
+                @leave="handleLeave"
+                @after-leave="handleAfterLeave">
+        <h3 v-if="show1">Hello Vue</h3>
+    </transition>
+    
+    <!--动态过渡-->
+    <div>
+        淡入: <input type="range" v-model="fadeInDuration" min="0" :max="maxFadeDuration">
+        淡出: <input type="range" v-model="fadeOutDuration" min="0" :max="maxFadeDuration">
+        <transition v-bind:css="false"
+                    v-on:before-enter="beforeEnter"
+                    v-on:enter="enter"
+                    v-on:leave="leave">
+            <p v-if="show">hello vue</p>
+        </transition>
+        <button v-if="stop" @click="stop = false; show = false">
+            开始动画
+        </button>
+        <button v-else @click="stop = true">
+            停止!
+        </button>
+    </div>
+</div>
+
+<script>
+    var vm = new Vue({
+        el: '#app',
+        data: {
+            show1: true,
+            show: true,
+            fadeInDuration: 1000,
+            fadeOutDuration: 1000,
+            maxFadeDuration: 1500,
+            stop: true
+        },
+        mounted: function () {
+            this.show = false
+        },
+        methods: {
+            handleClick () {
+                this.show1 = !this.show1
+            },
+            handleBeforeEnter (el) {
+                console.log('入场动画开始')
+                el.style.opacity = 0
+            },
+            // el 指动画包裹的标签
+            handleEnter (el, done) {
+                console.log('入场动画进行中')
+                Velocity(el, {opacity: 1}, {duration: 2000, complete: done})
+            },
+            handleAfterEnter (el) {
+                console.log('入场动画结束')
+            },
+            handleBeforeLeave (el) {
+                console.log('离场动画开始')
+                el.style.opacity = 1
+            },
+            handleLeave (el, done) {
+                console.log('离场动画进行中')
+                Velocity(el, {opacity: 0}, {duration: 2000, complete: done})
+            },
+            handleAfterLeave (el) {
+                console.log('离场动画结束')
+            },
+            beforeEnter (el) {
+                el.style.opacity = 0
+            },
+            enter (el, done) {
+                let vm = this
+                Velocity(el,
+                    {opacity: 1},
+                    {
+                        duration: this.fadeInDuration,
+                        complete: function () {
+                            done()
+                            if (!vm.stop) vm.show = false
+                        }
+                    }
+                )
+            },
+            leave (el, done) {
+                let vm = this
+                Velocity(el,
+                    {opacity: 0},
+                    {
+                        duration: this.fadeOutDuration,
+                        complete: function () {
+                            done()
+                            vm.show = true
+                        }
+                    }
+                )
+            }
+        }
+    })
+</script>
+
+</body>
+</html>
